@@ -5,7 +5,8 @@ from blockchain import Blockchain
 
 class Node:
     def __init__(self):
-        self.id = str(uuid4())
+        # self.id = str(uuid4())
+        self.id = 'GAV'
         self.blockchain = Blockchain(self.id)
 
     def get_transaction_value(self):
@@ -19,7 +20,7 @@ class Node:
         return input('Your choice: ') 
 
     def print_blockchain_element(self):
-        for block in self.blockchain.chain:
+        for block in self.blockchain.get_chain():
             print('Outputting Block')
             print(block)
         else:
@@ -38,8 +39,6 @@ class Node:
 
             user_choice = self.get_user_choice()
 
-            verifier = Verification()
-
             if user_choice == '1':
                 tx_data = self.get_transaction_value()
                 recipient, amount = tx_data
@@ -47,13 +46,13 @@ class Node:
                     print('Added transaction!')
                 else:
                     print('Transaction failed!')
-                print(self.blockchain.open_transactions)
+                print(self.blockchain.get_open_transactions())
             elif user_choice == '2':
                 self.blockchain.mine_block()
             elif user_choice == '3':
                 self.print_blockchain_element()
             elif user_choice == '4':
-                if verifier.verify_transactions(self.blockchain.open_transactions, self.blockchain.get_balance):
+                if Verification.verify_transactions(self.blockchain.get_open_transactions(), self.blockchain.get_balance):
                     print('All transactions are valid')
                 else:
                     print('There are invalid transactions!')
@@ -61,7 +60,7 @@ class Node:
                 waiting_for_input = False
             else:
                 print('Input invalid. Please a value from the list')
-            if not verifier.verify_chain(self.blockchain.chain):
+            if not Verification.verify_chain(self.blockchain.get_chain()):
                 self.print_blockchain_element()
                 print('Invalid blockchain!')
                 break
