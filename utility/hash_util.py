@@ -1,6 +1,5 @@
 import hashlib as hl
 import json
-from string import hexdigits
 
 def hash_string_256(string):
     return hl.sha256(string).hexdigest()
