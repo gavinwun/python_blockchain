@@ -1,6 +1,9 @@
+"""Provides verification helper methods"""
+
 from utility.hash_util import hash_string_256, hash_block
 
 class Verification:
+    """A helper class which offer various static and class-based verification methods"""
     @staticmethod
     def valid_proof(transactions, last_hash, proof):
         guess = (str([tx.to_ordered_dict() for tx in transactions]) + str(last_hash) + str(proof)).encode()
