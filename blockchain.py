@@ -115,8 +115,9 @@ class Blockchain:
             recipient: The recipient of the coints.
             amount: The amount of coinst sent with the transaction (default = 1.0)
         """
+        if self.hosting_node == None:
+            return False
 
-        # transaction = {'sender': sender, 'recipient': recipient, 'amount': amount}
         transaction = Transaction(sender, recipient, amount)
 
         if Verification.verify_transaction(transaction, self.get_balance):
@@ -127,6 +128,9 @@ class Blockchain:
 
     def mine_block(self):
         """ Create a new block and add open transactions to it. """
+        if self.hosting_node == None:
+            return False
+            
         last_block = self.__chain[-1]
 
         hashed_block = hash_block(last_block)
