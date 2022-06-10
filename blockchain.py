@@ -98,8 +98,8 @@ class Blockchain:
         return proof
 
     def get_balance(self, sender=None):
-        if sender == None:
-            if self.public_key == None:
+        if sender is None:
+            if self.public_key is None:
                 return None
                 
             participant = self.public_key
@@ -131,7 +131,7 @@ class Blockchain:
             recipient: The recipient of the coints.
             amount: The amount of coinst sent with the transaction (default = 1.0)
         """
-        # if self.public_key == None:
+        # if self.public_key is None:
         #     return False
 
         transaction = Transaction(sender, recipient, signature, amount)
@@ -159,7 +159,7 @@ class Blockchain:
 
     def mine_block(self):
         """ Create a new block and add open transactions to it. """
-        if self.public_key == None:
+        if self.public_key is None:
             return None
 
         last_block = self.__chain[-1]
