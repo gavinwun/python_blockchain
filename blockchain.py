@@ -63,7 +63,7 @@ class Blockchain:
                 peer_nodes = json.loads(file_content[2])
                 self.__peer_nodes = set(peer_nodes)
         except (IOError, IndexError):
-            print('Handled exception...')
+            print('Handled exception when loading blockchain from file...')
         finally:
             print('Cleanup!')
 
@@ -221,6 +221,32 @@ class Blockchain:
                         print('Item already removed.')
         self.save_data()
         return True
+
+    def resolve(self):
+        """Resolve any blockchain conflicts from current nodes on network"""
+        winner_chain = self.chain
+        replace = False
+        for node in self.__peer_nodes:
+            url = 'http://{}/chain'.format(node)
+            try:
+                response = requests.get(url)
+                node_chain = response.json()
+                node_chain = [Block(block['index'], block['previous_hash'], block['transactions'], block['proof'], block['timestamp']) for block in node_chain]
+                for block in node_chain:
+                    block.transactions = [Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in block.transactions]
+                node_chain_length = len(node_chain)
+                local_chain_length = len(winner_chain)
+                if node_chain_length > local_chain_length and Verification.verify_chain(node_chain):
+                    winner_chain = node_chain
+                    replace = True
+            except requests.exceptions.ConnectionError:
+                continue
+        self.resolve_conflicts = False
+        self.chain = winner_chain
+        if replace:
+            self.__open_transactions = []
+        self.save_data()
+        return replace
 
     def add_peer_node(self, node):
         """Adds a new node to peer node set.
